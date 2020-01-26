@@ -11,14 +11,8 @@ class NegociacaoController {
     adiciona(event) {
         event.preventDefault();
 
-        let data = new Date(...
-            this._inputData.value
-                .split('-')
-                .map((item, indice) => item - indice % 2)
-        );
-
         let negociacao = new Negociacao(
-            data,
+            DateHelper.textoParaData(this._inputData.value),
             this._inputQuantidade.value,
             this._inputValor.value
         );
@@ -36,13 +30,11 @@ class NegociacaoController {
 
     atualizaLista(negociacao) {
         let campos = [
-            this.dataToString(negociacao.data),
+            DateHelper.dataParaTexto(negociacao.data),
             negociacao.quantidade,
             negociacao.valor,
             negociacao.volume
         ];
-
-        console.log(this._tbody);
 
         var tr = document.createElement('tr');
 
@@ -52,19 +44,5 @@ class NegociacaoController {
             tr.appendChild(td);
         });
         this._tbody.appendChild(tr);
-    }
-
-    dataToString(data) {
-        let dd = data.getDate();
-        let mm = data.getMonth() + 1;
-
-        let yyyy = data.getFullYear();
-        if (dd < 10) {
-            dd = '0' + dd;
-        }
-        if (mm < 10) {
-            mm = '0' + mm;
-        }
-        return dd + '/' + mm + '/' + yyyy;
     }
 }
