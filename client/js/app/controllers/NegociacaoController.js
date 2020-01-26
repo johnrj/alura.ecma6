@@ -6,19 +6,15 @@ class NegociacaoController {
         this._inputQuantidade = $('#quantidade');
         this._inputValor = $('#valor');
         this._tbody = $('table tbody');
+        this._listaNegociacoes = new ListaNegociacoes();
     }
 
     adiciona(event) {
         event.preventDefault();
 
-        let negociacao = new Negociacao(
-            DateHelper.textoParaData(this._inputData.value),
-            this._inputQuantidade.value,
-            this._inputValor.value
-        );
-
-        this.atualizaLista(negociacao);
+        this._listaNegociacoes.adiciona(this.criaNegociacao());
         this.limpaFormulario();
+        console.log(this._listaNegociacoes.negociacoes);
     }
 
     limpaFormulario() {
@@ -28,21 +24,11 @@ class NegociacaoController {
         this._inputData.focus();
     }
 
-    atualizaLista(negociacao) {
-        let campos = [
-            DateHelper.dataParaTexto(negociacao.data),
-            negociacao.quantidade,
-            negociacao.valor,
-            negociacao.volume
-        ];
-
-        var tr = document.createElement('tr');
-
-        campos.forEach(function (campo) {
-            var td = document.createElement('td');
-            td.textContent = campo;
-            tr.appendChild(td);
-        });
-        this._tbody.appendChild(tr);
+    criaNegociacao() {
+        return new Negociacao(
+            DateHelper.textoParaData(this._inputData.value),
+            this._inputQuantidade.value,
+            this._inputValor.value
+        );
     }
 }
