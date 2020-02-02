@@ -45,4 +45,15 @@ class NegociacaoController {
     apaga() {
         this._listaNegociacoes.esvazia();
     }
+
+    importaNegociacoes() {
+        let service = new NegociacaoService();
+        service.obterNegociacoesDaSemana((erro, negociacoes) => {
+            if (erro) {
+                this._mensagem.texto = erro;
+                return;
+            }
+            negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao))
+        });
+    }
 }
