@@ -1,7 +1,6 @@
 class ListaNegociacoes {
     constructor() {
         this._listaNegocicoes = [];
-        Object.freeze(this);
     }
 
     adiciona(negociacao) {
@@ -10,5 +9,9 @@ class ListaNegociacoes {
 
     get negociacoes() {
         return [].concat(this._listaNegocicoes);
+    }
+
+    esvazia() {
+        this._listaNegocicoes = [];
     }
 }
