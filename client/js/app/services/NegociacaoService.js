@@ -1,17 +1,44 @@
 class NegociacaoService {
-    obterNegociacoesDaSemana(cb) {
-        let xhr = new XMLHttpRequest();
-        xhr.open('GET', 'negociacoes/semana');
-        xhr.onreadystatechange = () => {
-            if (xhr.readyState == 4) {
-                if (xhr.status == 200) {
-                    cb(null, JSON.parse(xhr.responseText)
-                        .map(obj => new Negociacao(new Date(obj.data), obj.quantidade, obj.valor)));
-                } else {
-                    cb('Erro ao obter negociações.', null);
-                }
-            }
-        };
-        xhr.send();
+    constructor() {
+        this._httpService = new HttpService();
+    }
+    obterNegociacoesDaSemana() {
+        return this._httpService.get('negociacoes/semana')
+            .then(negociacoes =>
+                negociacoes.map(obj => new Negociacao(new Date(obj.data), obj.quantidade, obj.valor)))
+            .catch(err => {
+                console.log(err);
+                throw new Error('Erro ao obter negociações.')
+            });
+    }
+    obterNegociacoesDaSemanaAnterior() {
+        return this._httpService.get('negociacoes/anterior')
+            .then(negociacoes =>
+                negociacoes.map(obj => new Negociacao(new Date(obj.data), obj.quantidade, obj.valor)))
+            .catch(err => {
+                console.log(err);
+                throw new Error('Erro ao obter negociações.')
+            });
+    }
+    obterNegociacoesDaSemanaRetrasada() {
+        return this._httpService.get('negociacoes/retrasada')
+            .then(negociacoes =>
+                negociacoes.map(obj => new Negociacao(new Date(obj.data), obj.quantidade, obj.valor)))
+            .catch(err => {
+                console.log(err);
+                throw new Error('Erro ao obter negociações.')
+            });
+    }
+    obterTodasNegociacoes() {
+        return Promise.all(
+            [
+                this.obterNegociacoesDaSemana(),
+                this.obterNegociacoesDaSemanaAnterior(),
+                this.obterNegociacoesDaSemanaRetrasada()
+            ]
+        )
+            .then(negociacoes =>
+                negociacoes.reduce((ret, arr) => ret.concat(arr), []))
+            .catch(err => err);
     }
 }
