@@ -28,28 +28,30 @@
         <button class="btn btn-primary" type="submit" onclick="sendPost(event)">Enviar dados para servidor</button>
     </form>
 
+    <script src="js/app/services/HttpService.js"></script>
     <script>
 
         function sendPost(event) {
 
             event.preventDefault();
 
-            let xhr = new XMLHttpRequest();
-            xhr.open('POST', '/negociacoes');
-            xhr.setRequestHeader('Content-type', 'application/json');
+            let inputData = document.querySelector('#data');
+            let inputQuantidade = document.querySelector('#quantidade');
+            let inputValor = document.querySelector('#valor');
 
-            xhr.onreadystatechange = function () {
-
-                if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-                    console.log(xhr.responseText);
-                }
-            };
-            let data = JSON.stringify({
-                'data': document.querySelector('#data').value,
-                'quantidade': document.querySelector('#quantidade').value,
-                'valor': document.querySelector('#valor').value
+            let httpService = new HttpService();
+            httpService.post('/negociacoes', {
+                'data': inputData.value,
+                'quantidade': inputQuantidade.value,
+                'valor': inputValor.value
+            }).then(() => {
+                inputData.value = '';
+                inputQuantidade.value = 0;
+                inputValor.value = 0.0
+            }).catch(err => {
+                console.log(err);
+                alert('Não foi possível enviar a negociação.');
             });
-            xhr.send(data);
         }
     </script>
 </body>
