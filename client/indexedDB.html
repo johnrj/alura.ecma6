@@ -9,19 +9,56 @@
 </head>
 
 <body>
+    <script src="js/app/models/Negociacao.js"></script>
     <script>
-        var openReq = window.indexedDB.open('aluraframe', 1);
+        let osnNegociacoes = 'negociacoes';
+        let openRequest = window.indexedDB.open('aluraframe', 3);
+        let connection;
 
-        openReq.onupgradeneeded = e => {
-            console.log('Cria ou altera banco.');
+        openRequest.onupgradeneeded = e => {
+            connection = e.target.result;
+
+            if (connection.objectStoreNames.contains(osnNegociacoes)) {
+                connection.deleteObjectStore(osnNegociacoes);
+            }
+            connection.createObjectStore(osnNegociacoes, { autoIncrement: true });
         };
 
-        openReq.onsuccess = e => {
-            console.log('Conexão obtida com sucesso');
+        openRequest.onsuccess = e => {
+            connection = e.target.result;
         };
 
-        openReq.onerror = e => {
+        openRequest.onerror = e => {
             console.log(e.target.error);
+        }
+
+        function adciona() {
+            let transaction = connection.transaction([osnNegociacoes], 'readwrite');
+            let store = transaction.objectStore(osnNegociacoes);
+
+            let negociacao = new Negociacao(new Date(), 200, 1.0);
+            let request = store.add(negociacao);
+        }
+
+        function listaTodas() {
+            let transaction = connection.transaction([osnNegociacoes], 'readwrite');
+            let store = transaction.objectStore(osnNegociacoes);
+
+            let negociacoes = [];
+
+            let cursor = store.openCursor();
+
+            cursor.onsuccess = e => {
+                let atual = e.target.result;
+                if (atual) {
+                    let dado = atual.value;
+                    negociacoes.push(new Negociacao(dado._data, dado._quantidade, dado._valor));
+                    atual.continue();
+                } else {
+                    console.log(negociacoes);
+                }
+            };
+            cursor.onerror = e => console.log('Erro: ' + e.target.error.name);
         }
     </script>
 </body>
