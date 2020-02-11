@@ -30,15 +30,44 @@ class NegociacaoService {
             });
     }
     obterTodasNegociacoes() {
-        return Promise.all(
-            [
-                this.obterNegociacoesDaSemana(),
-                this.obterNegociacoesDaSemanaAnterior(),
-                this.obterNegociacoesDaSemanaRetrasada()
-            ]
-        )
+        return Promise.all([
+            this.obterNegociacoesDaSemana(),
+            this.obterNegociacoesDaSemanaAnterior(),
+            this.obterNegociacoesDaSemanaRetrasada()
+        ])
             .then(negociacoes =>
                 negociacoes.reduce((ret, arr) => ret.concat(arr), []))
-            .catch(err => err);
+            .catch(err => {
+                console.log(err);
+                throw new Error('Erro ao obter todas Negociações');
+            });
+    }
+    cadastra(negociacao) {
+        return ConnectionFactory.getConnection()
+            .then(conn => new NegociacaoDao(conn))
+            .then(dao => dao.adiciona(negociacao))
+            .then(() => 'Negociação adicionada com sucesso!')
+            .catch(err => {
+                console.log(err);
+                throw new Error('Erro ao cadastrar Negociação.');
+            });
+    }
+    apaga() {
+        return ConnectionFactory.getConnection()
+            .then(conn => new NegociacaoDao(conn))
+            .then(dao => dao.apagarTodas())
+            .catch(err => {
+                console.log(err);
+                throw new Error('Erro ao apagar todas Negociações');
+            });
+    }
+    lista() {
+        return ConnectionFactory.getConnection()
+            .then(conn => new NegociacaoDao(conn))
+            .then(dao => dao.listaTodas())
+            .catch(err => {
+                console.log(err);
+                throw new Error('Erro ao listar todas Negociações');
+            });
     }
 }

@@ -18,15 +18,39 @@ class NegociacaoController {
             'texto'
         );
 
+        this._service = new NegociacaoService();
+
         this._ordemAtual = '';
+        this._init();
+    }
+
+    _init() {
+
+        this._service.lista()
+            .then(negociacoes => {
+                negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao));
+                this.ordena('data');
+            })
+            .catch(err => this._mensagem.texto = err);
+
+        setInterval(() => {
+            this.importaNegociacoes();
+        }, 5000);
     }
 
     adiciona(event) {
         event.preventDefault();
 
-        this._listaNegociacoes.adiciona(this.criaNegociacao());
-        this._mensagem.texto = 'Negociação adicionada com sucesso!';
-        this.limpaFormulario();
+        let negociacao = this.criaNegociacao();
+
+        this._service.cadastra(negociacao)
+            .then(() => {
+                this._listaNegociacoes.adiciona(negociacao);
+                this._mensagem.texto = 'Negociação adicionada com sucesso!';
+                this.limpaFormulario();
+            })
+            .catch(err => this._mensagem.texto = err);
+
     }
 
     limpaFormulario() {
@@ -39,19 +63,25 @@ class NegociacaoController {
     criaNegociacao() {
         return new Negociacao(
             DateHelper.textoParaData(this._inputData.value),
-            this._inputQuantidade.value,
-            this._inputValor.value
+            parseInt(this._inputQuantidade.value),
+            parseFloat(this._inputValor.value)
         );
     }
 
     apaga() {
-        this._listaNegociacoes.esvazia();
+        this._service.apaga()
+            .then(msg => {
+                this._mensagem.texto = msg;
+                this._listaNegociacoes.esvazia();
+            })
+            .catch(err => this._mensagem.texto = err);
+
     }
 
     importaNegociacoes() {
-        let service = new NegociacaoService();
-
-        service.obterTodasNegociacoes()
+        this._service.obterTodasNegociacoes()
+            .then(negociacoes => negociacoes.filter(negociacao =>
+                !this._listaNegociacoes.negociacoes.some(busca => JSON.stringify(busca) == JSON.stringify(negociacao))))
             .then(negociacoes => negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao)))
             .catch(err => this._mensagem.texto = err);
     }
