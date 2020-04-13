@@ -1,9 +1,9 @@
-class ProxyFactory {
+export class ProxyFactory {
     static create(obj, props, action) {
         return new Proxy(obj, {
             get(target, prop, receiver) {
                 if (props.includes(prop) && ProxyFactory._isTypeOfFunction(target[prop])) {
-                    return function () {
+                    return function() {
                         Reflect.apply(target[prop], target, arguments);
                         return action(target);
                     }
@@ -21,6 +21,6 @@ class ProxyFactory {
         });
     }
     static _isTypeOfFunction(f) {
-        return typeof (f) == typeof (Function)
+        return typeof(f) == typeof(Function)
     }
 }

@@ -1,17 +1,26 @@
-class NegociacoesView extends BaseView {
+import { BaseView } from './BaseView';
+import { DateHelper } from '../helpers/DateHelper';
+import { currentInstance } from './controllers/NegociacaoController';
+
+export class NegociacoesView extends BaseView {
     constructor(elemento) {
         super(elemento);
+        elemento.addEventListener('click', function(event) {
+            if (event.target.nodeName == 'TH') {
+                currentInstance().ordena(event.target.textContent.toLowerCase());
+            }
+        });
     }
 
     template(modelo) {
-        return `    
+            return `    
             <table class="table table-hover table-bordered">
                 <thead>
                     <tr>
-                        <th onclick="controller.ordena('data')">DATA</th>
-                        <th onclick="controller.ordena('quantidade')">QUANTIDADE</th>
-                        <th onclick="controller.ordena('valor')">VALOR</th>
-                        <th onclick="controller.ordena('volume')">VOLUME</th>
+                        <th>DATA</th>
+                        <th>QUANTIDADE</th>
+                        <th>VALOR</th>
+                        <th>VOLUME</th>
                     </tr>
                 </thead>
 

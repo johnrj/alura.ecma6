@@ -1,4 +1,9 @@
-class NegociacaoService {
+import { HttpService } from './HttpService';
+import { Negociacao } from '../models/Negociacao';
+import { NegociacaoDao } from '../dao/NegociacaoDao';
+import { ConnectionFactory } from '../services/ConnectionFactory';
+
+export class NegociacaoService {
     constructor() {
         this._httpService = new HttpService();
     }
@@ -31,10 +36,10 @@ class NegociacaoService {
     }
     obterTodasNegociacoes() {
         return Promise.all([
-            this.obterNegociacoesDaSemana(),
-            this.obterNegociacoesDaSemanaAnterior(),
-            this.obterNegociacoesDaSemanaRetrasada()
-        ])
+                this.obterNegociacoesDaSemana(),
+                this.obterNegociacoesDaSemanaAnterior(),
+                this.obterNegociacoesDaSemanaRetrasada()
+            ])
             .then(negociacoes =>
                 negociacoes.reduce((ret, arr) => ret.concat(arr), []))
             .catch(err => {

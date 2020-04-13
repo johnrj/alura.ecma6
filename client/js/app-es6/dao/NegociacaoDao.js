@@ -1,4 +1,6 @@
-class NegociacaoDao {
+import { Negociacao } from '../models/Negociacao';
+
+export class NegociacaoDao {
     constructor(connection) {
         this._connection = connection;
         this._store = 'negociacoes';
@@ -20,7 +22,7 @@ class NegociacaoDao {
     listaTodas() {
         return new Promise((res, rej) => {
             let cursor = this._connection.
-                transaction([this._store], 'readwrite')
+            transaction([this._store], 'readwrite')
                 .objectStore(this._store)
                 .openCursor();
 
@@ -43,7 +45,7 @@ class NegociacaoDao {
     apagarTodas() {
         return new Promise((res, rej) => {
             let cursor = this._connection.
-                transaction([this._store], 'readwrite')
+            transaction([this._store], 'readwrite')
                 .objectStore(this._store)
                 .clear();
             cursor.onsuccess = e => {
