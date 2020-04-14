@@ -1,6 +1,6 @@
 import { BaseView } from './BaseView';
 import { DateHelper } from '../helpers/DateHelper';
-import { currentInstance } from './controllers/NegociacaoController';
+import { currentInstance } from '../controllers/NegociacaoController';
 
 export class NegociacoesView extends BaseView {
     constructor(elemento) {
